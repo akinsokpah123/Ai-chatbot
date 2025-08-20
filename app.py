@@ -3,14 +3,15 @@ import sqlite3
 import openai
 import os
 
-# Set your OpenAI API key here or use environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY", "your_openai_api_key_here")
+# Load OpenAI API key from environment variable
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
-# Initialize SQLite DB
+# Database file
 DB_FILE = "chat_history.db"
 
+# Initialize SQLite DB
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
@@ -25,6 +26,11 @@ def init_db():
     conn.close()
 
 init_db()
+
+# Health check endpoint for Render
+@app.route("/healthz")
+def healthz():
+    return "OK", 200
 
 # HTML Template
 HTML_TEMPLATE = """
